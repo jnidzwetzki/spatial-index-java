@@ -20,11 +20,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.github.jnidzwetzki</groupId>
-	<artifactId>spatial-index-java</artifactId>
+	<artifactId>sia4j</artifactId>
 	<packaging>jar</packaging>
 	<version>0.5.0-snapshot</version>
 
-	<name>Spatial index java</name>
+	<name>Spatial indexing algorithms for java</name>
 	<description>Implementation spatial index algorithms in java</description>
 	<url>https://github.com/jnidzwetzki/spatial-index-java</url>
 
