@@ -1,2 +1,2 @@
-# java-rtree
-An in-memory implementation of a r-tree
+# Spatial index java
+Implementation of spatial indexing algorithms in java.
