@@ -29,7 +29,8 @@ final SpatialIndexBuilder index = new RTreeBuilder();
 index.bulkInsert(Arrays.asList(entry1, entry2);
 
 // Query data
-final List<? extends SpatialIndexEntry> resultList = index.getEntriesForRegion(new BoundingBox(1d, 1.5d, 1d, 1.5d));
+final BoundingBox queryBox = new BoundingBox(1d, 1.5d, 1d, 1.5d);
+final List<? extends SpatialIndexEntry> resultList = index.getEntriesForRegion(queryBox);
 ```
 
 ### Write the r-tree into a file and read into memory
