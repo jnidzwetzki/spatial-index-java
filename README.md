@@ -1,5 +1,5 @@
 # Spatial index java
-Implementation of spatial indexing algorithms in java. At the moment, only an r-tree index is implemented by this project.
+Implementation of spatial indexing algorithms in java. At the moment, only an [r-tree](https://en.wikipedia.org/wiki/R-tree) index is implemented by this project.
 
 ## Features of the R-tree implementation
 * Supports rectangle geometries
