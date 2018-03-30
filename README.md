@@ -1,10 +1,13 @@
-# Spatial index java
+# Spatial indexing algorithms for java (sia4j)
+
 Implementation of spatial indexing algorithms in java. At the moment, only an [r-tree](https://en.wikipedia.org/wiki/R-tree) index is implemented by this project.
 
 <a href="https://travis-ci.org/jnidzwetzki/crypto-bot">
   <img alt="Build Status" src="https://travis-ci.org/jnidzwetzki/spatial-index-java.svg?branch=master">
 </a><a href="http://makeapullrequest.com">
  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
+</a><a href="https://codecov.io/gh/jnidzwetzki/spatial-index-java">
+  <img src="https://codecov.io/gh/jnidzwetzki/spatial-index-java/branch/master/graph/badge.svg" />
 </a>
 
 ## Features of the R-tree implementation
