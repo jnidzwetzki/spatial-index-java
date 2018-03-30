@@ -8,7 +8,7 @@ Implementation of spatial indexing algorithms in java. At the moment, only an [r
  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" />
 </a><a href="https://codecov.io/gh/jnidzwetzki/spatial-index-java">
   <img src="https://codecov.io/gh/jnidzwetzki/spatial-index-java/branch/master/graph/badge.svg" />
-</a>
+</a><a href="https://codeclimate.com/github/jnidzwetzki/spatial-index-java/maintainability"><img src="https://api.codeclimate.com/v1/badges/fb2bb5aa57582a61867d/maintainability" /></a>
 
 ## Features of the R-tree implementation
 * Supports rectangle geometries
