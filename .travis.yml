@@ -1,0 +1,33 @@
+language: java
+jdk:
+   - oraclejdk8
+   
+before_install:
+  - echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
+  
+cache:
+  directories:
+   - $HOME/.m2
+
+sudo: false
+dist: trusty
+
+env:
+  global:
+   # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+   #   via the "travis encrypt" command using the project repo's public key
+  - secure: "KgI42WNLTtJPCT5C2/bpma9qHnJubc3vSAKvn2ePkyHatdUreaboknNmRfefrhOLhtq7Kjg5msZKlNjHFFyLtM0T+v2CWsfX810MtAwNkOKdSsFk9pyD3djDs8Z9Dy7L+BSVNfGqsS+LHkyWzub86JlU+1ynSroPDcdsOZvpROB/BYj8djbfqTSm1HmjIiz/ccWaokjaIlMCEzIXXDoLbb+oN3nr7iNxuHtq4e46q2AjPBUWH8eLQjMQVMuLfWNL0NeLHVCg2WHnTtxkPvypVAF2EHzXHZy345B6d+TKMSzzSHRgXS8bSaVoUe+wZ1uVjfrDL1jq69X7b82kko7z3dTu32Cfu5YtiniQjcMnY6fr2dNYV0kYqJTTLCfVCwsRpbzKMmZlpC0ur+gc/s49PEaVZOSytLmNF2vBhWwZLmwtTWrAstaIb0UK7uusigHoiqJcd9ddkAwspbHkhH0e0sRz1jxIUckc5/0g9bGLkkJmOFbkON2eQXaN1OSsvTxonBSHRRUIFtYKa/k+CdEVvtOMLnsD+ghjB0l9HgVI0JScmPnpJ8duWXNSRRRGIa2nrYMirm+WwgZiV40ghQN0KQcP1lH3dmouF0tm2jAOuModz7cWdVeO3jf4pJ91tyaLnm2tMIrlWRNFqvFrgH4rdbwTr+d0kjhnaRPt7SrE1Ow="
+
+addons:
+  coverity_scan:
+    project:
+      name: "jnidzwetzki/spatial-index-java"
+      description: "Build submitted via Travis CI"
+    notification_email: jnidzwetzki@gmx.de
+    build_command_prepend: "mvn clean"
+    build_command:   "mvn -DskipTests=true compile"
+    branch_pattern: coverity_scan
+
