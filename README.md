@@ -22,14 +22,14 @@ Implementation of spatial indexing algorithms in java. At the moment, only an [r
 ### Building the r-tree and execute a rane query
 ```java
 // Two entries with a two-dimensional bounding box
-final SpatialIndexEntry entry1 = new SpatialIndexEntry(new BoundingBox(1d, 2d, 1d, 2d), "abc");
-final SpatialIndexEntry entry2 = new SpatialIndexEntry(new BoundingBox(10d, 20d, 10d, 20d), "def");
+final SpatialIndexEntry entry1 = new SpatialIndexEntry(new Hyperrectangle(1d, 2d, 1d, 2d), "abc");
+final SpatialIndexEntry entry2 = new SpatialIndexEntry(new Hyperrectangle(10d, 20d, 10d, 20d), "def");
 
 final SpatialIndexBuilder index = new RTreeBuilder();
 index.bulkInsert(Arrays.asList(entry1, entry2);
 
 // Query data
-final BoundingBox queryBox = new BoundingBox(1d, 1.5d, 1d, 1.5d);
+final Hyperrectangle queryBox = new Hyperrectangle(1d, 1.5d, 1d, 1.5d);
 final List<? extends SpatialIndexEntry> resultList = index.getEntriesForRegion(queryBox);
 ```
 

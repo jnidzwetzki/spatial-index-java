@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bboxdb.commons.io.DataEncoderHelper;
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 
 import com.github.jnidzwetzki.spatialindex.SpatialIndexEntry;
 import com.github.jnidzwetzki.spatialindex.rtree.RTreeBuilder;
@@ -39,7 +39,7 @@ public class DirectoryNode {
 	/**
 	 * The bounding box
 	 */
-	protected BoundingBox boundingBox;
+	protected Hyperrectangle hyperrectangle;
 	
 	/**
 	 * The leaf node children
@@ -66,11 +66,11 @@ public class DirectoryNode {
 		nodeId = memory.getInt();				
 		
 		// Bounding box data
-		final int boundingBoxLength = memory.getInt();
-		final byte[] boundingBoxBytes = new byte[boundingBoxLength];
-		memory.get(boundingBoxBytes, 0, boundingBoxBytes.length);
+		final int HyperrectangleLength = memory.getInt();
+		final byte[] HyperrectangleBytes = new byte[HyperrectangleLength];
+		memory.get(HyperrectangleBytes, 0, HyperrectangleBytes.length);
 
-		boundingBox = BoundingBox.fromByteArray(boundingBoxBytes);
+		hyperrectangle = Hyperrectangle.fromByteArray(HyperrectangleBytes);
 		
 		final byte[] followingByte = new byte[RTreeBuilder.MAGIC_VALUE_SIZE];
 
@@ -97,8 +97,8 @@ public class DirectoryNode {
 		}
 	}
 	
-	public BoundingBox getBoundingBox() {
-		return boundingBox;
+	public Hyperrectangle getHyperrectangle() {
+		return hyperrectangle;
 	}
 	
 	public int getNodeId() {

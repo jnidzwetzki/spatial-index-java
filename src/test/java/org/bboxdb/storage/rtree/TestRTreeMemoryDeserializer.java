@@ -23,7 +23,7 @@ import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -84,7 +84,7 @@ public class TestRTreeMemoryDeserializer {
 	@Test(timeout=60000)
 	public void testSerializeIndexSmall() throws SpatialIndexException, IOException, InterruptedException {
 		final List<SpatialIndexEntry> tupleList = new ArrayList<>();
-		tupleList.add(new SpatialIndexEntry(new BoundingBox(1.0, 1.2), 2));
+		tupleList.add(new SpatialIndexEntry(new Hyperrectangle(1.0, 1.2), 2));
 		
 		final SpatialIndexBuilder index = new RTreeBuilder();
 		index.bulkInsert(tupleList);
@@ -102,7 +102,7 @@ public class TestRTreeMemoryDeserializer {
 		indexRead.readFromFile(rafRead);
 		rafRead.close();
 		
-		final List<? extends SpatialIndexEntry> resultList = indexRead.getEntriesForRegion(new BoundingBox(1.1, 1.2));
+		final List<? extends SpatialIndexEntry> resultList = indexRead.getEntriesForRegion(new Hyperrectangle(1.1, 1.2));
 		Assert.assertEquals(1, resultList.size());
 		
 		indexRead.close();

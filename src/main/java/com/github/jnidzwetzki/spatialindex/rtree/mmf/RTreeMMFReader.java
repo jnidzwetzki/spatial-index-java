@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 import org.bboxdb.commons.io.DataEncoderHelper;
 import org.bboxdb.commons.io.UnsafeMemoryHelper;
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,7 +98,7 @@ public class RTreeMMFReader extends AbstractRTreeReader {
 	}
 
 	@Override
-	public synchronized List<SpatialIndexEntry> getEntriesForRegion(final BoundingBox boundingBox) 
+	public synchronized List<SpatialIndexEntry> getEntriesForRegion(final Hyperrectangle Hyperrectangle) 
 			throws SpatialIndexException {
 		
 		final List<SpatialIndexEntry> resultList = new ArrayList<>();
@@ -114,13 +114,13 @@ public class RTreeMMFReader extends AbstractRTreeReader {
 				final DirectoryNode directoryNode = new DirectoryNode();
 				directoryNode.initFromByteBuffer(memory, maxNodeSize);
 				
-				if(directoryNode.getBoundingBox().overlaps(boundingBox)) {
+				if(directoryNode.getHyperrectangle().intersects(Hyperrectangle)) {
 					readTasks.addAll(directoryNode.getChildNodes());
 					
 					final List<SpatialIndexEntry> foundEntries = 
 						directoryNode.getIndexEntries()
 						.stream()
-						.filter(e -> e.getBoundingBox().overlaps(boundingBox))
+						.filter(e -> e.getHyperrectangle().intersects(Hyperrectangle))
 						.collect(Collectors.toList());
 					
 					resultList.addAll(foundEntries);

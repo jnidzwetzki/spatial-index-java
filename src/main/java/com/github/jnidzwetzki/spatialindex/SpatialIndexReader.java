@@ -21,7 +21,7 @@ import java.io.Closeable;
 import java.io.RandomAccessFile;
 import java.util.List;
 
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 
 public interface SpatialIndexReader extends Closeable {
 	
@@ -39,8 +39,8 @@ public interface SpatialIndexReader extends Closeable {
 	
 	/**
 	 * Find the entries for the given region
-	 * @param boundingBox
+	 * @param Hyperrectangle
 	 * @return
 	 */
-	public List<SpatialIndexEntry> getEntriesForRegion(final BoundingBox boundingBox) throws SpatialIndexException;
+	public List<SpatialIndexEntry> getEntriesForRegion(final Hyperrectangle Hyperrectangle) throws SpatialIndexException;
 }

@@ -132,10 +132,10 @@ public class RTreeSerializer {
 		randomAccessFile.write(nodeIdBytes.array());
 		
 		// Bounding box data
-		final byte[] boundingBoxBytes = node.getBoundingBox().toByteArray();
-		final ByteBuffer boundingBoxLength = DataEncoderHelper.intToByteBuffer(boundingBoxBytes.length);
-		randomAccessFile.write(boundingBoxLength.array());
-		randomAccessFile.write(boundingBoxBytes);
+		final byte[] HyperrectangleBytes = node.getHyperrectangle().toByteArray();
+		final ByteBuffer HyperrectangleLength = DataEncoderHelper.intToByteBuffer(HyperrectangleBytes.length);
+		randomAccessFile.write(HyperrectangleLength.array());
+		randomAccessFile.write(HyperrectangleBytes);
 
 		// Write entry nodes
 		writeEntryNodes(randomAccessFile, node);

@@ -20,11 +20,11 @@ package com.github.jnidzwetzki.spatialindex.rtree;
 import java.util.List;
 
 import org.bboxdb.commons.Pair;
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 
-import com.github.jnidzwetzki.spatialindex.BoundingBoxEntity;
+import com.github.jnidzwetzki.spatialindex.HyperrectangleEntity;
 
-public class QuadraticSeedPicker<T extends BoundingBoxEntity> {
+public class QuadraticSeedPicker<T extends HyperrectangleEntity> {
 
 	/**
 	 * Find the seeds for the split
@@ -45,14 +45,14 @@ public class QuadraticSeedPicker<T extends BoundingBoxEntity> {
 					continue;
 				}
 				
-				final BoundingBox boundingBox1 = box1.getBoundingBox();
-				final BoundingBox boundingBox2 = box2.getBoundingBox();
+				final Hyperrectangle Hyperrectangle1 = box1.getHyperrectangle();
+				final Hyperrectangle Hyperrectangle2 = box2.getHyperrectangle();
 				
 				final double coveringArea 
-					= BoundingBox.getCoveringBox(boundingBox1, boundingBox2).getVolume();
+					= Hyperrectangle.getCoveringBox(Hyperrectangle1, Hyperrectangle2).getVolume();
 				
-				final double waste = coveringArea - boundingBox1.getVolume()
-						- boundingBox2.getVolume();
+				final double waste = coveringArea - Hyperrectangle1.getVolume()
+						- Hyperrectangle2.getVolume();
 				
 				if(waste < maxWaste) {
 					result = new Pair<T,T>(box1, box2);

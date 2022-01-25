@@ -17,14 +17,14 @@
  *******************************************************************************/
 package com.github.jnidzwetzki.spatialindex;
 
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 
-public interface BoundingBoxEntity {
+public interface HyperrectangleEntity {
 
 	/**
 	 * Get the bounding box
 	 * @return
 	 */
-	public BoundingBox getBoundingBox();
+	public Hyperrectangle getHyperrectangle();
 
 }

@@ -20,7 +20,7 @@ package com.github.jnidzwetzki.spatialindex;
 import java.io.RandomAccessFile;
 import java.util.List;
 
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 
 
 public interface SpatialIndexBuilder {
@@ -51,9 +51,9 @@ public interface SpatialIndexBuilder {
 	
 	/**
 	 * Find the entries for the given region
-	 * @param boundingBox
+	 * @param Hyperrectangle
 	 * @return
 	 */
-	public List<? extends SpatialIndexEntry> getEntriesForRegion(final BoundingBox boundingBox);
+	public List<? extends SpatialIndexEntry> getEntriesForRegion(final Hyperrectangle Hyperrectangle);
 
 }

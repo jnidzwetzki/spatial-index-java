@@ -22,12 +22,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 
-import com.github.jnidzwetzki.spatialindex.BoundingBoxEntity;
+import com.github.jnidzwetzki.spatialindex.HyperrectangleEntity;
 import com.github.jnidzwetzki.spatialindex.SpatialIndexEntry;
 
-public class RTreeDirectoryNode implements BoundingBoxEntity {
+public class RTreeDirectoryNode implements HyperrectangleEntity {
 	
 	/**
 	 * The directory node childs
@@ -47,7 +47,7 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 	/**
 	 * The bounding box of the node
 	 */
-	protected BoundingBox boundingBox;
+	protected Hyperrectangle hyperrectangle;
 	
 	/**
 	 * The parent node
@@ -71,16 +71,16 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 	 * @return
 	 */
 	@Override
-	public BoundingBox getBoundingBox() {
-		return boundingBox;
+	public Hyperrectangle getHyperrectangle() {
+		return hyperrectangle;
 	}
 	
 	/**
 	 * Set the bounding box
-	 * @param boundingBox
+	 * @param hyperrectangle
 	 */
-	public void setBoundingBox(BoundingBox boundingBox) {
-		this.boundingBox = boundingBox;
+	public void setHyperrectangle(Hyperrectangle hyperrectangle) {
+		this.hyperrectangle = hyperrectangle;
 	}
 	
 	/**
@@ -101,7 +101,7 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 
 	@Override
 	public String toString() {
-		return "RTreeDirectoryNode [boundingBox=" + boundingBox + ", nodeId=" + nodeId + "]";
+		return "RTreeDirectoryNode [Hyperrectangle=" + hyperrectangle + ", nodeId=" + nodeId + "]";
 	}
 
 	/**
@@ -130,7 +130,7 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 	 * @param rTreeLeafNode
 	 * @return
 	 */
-	public boolean removeIndexEntry(final BoundingBoxEntity entry) {
+	public boolean removeIndexEntry(final HyperrectangleEntity entry) {
 		
 		// We can carry directory nodes or index entries
 		assert (directoryNodeChilds.isEmpty());
@@ -141,22 +141,22 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 	/**
 	 * Recalculate the bounding box of all entries
 	 */
-	public void updateBoundingBox() {
-		final List<BoundingBox> boundingBoxes = getAllChildBoundingBoxes();
+	public void updateHyperrectangle() {
+		final List<Hyperrectangle> Hyperrectanglees = getAllChildHyperrectanglees();
 		
 		// Calculate bounding box
-		this.boundingBox = BoundingBox.getCoveringBox(boundingBoxes);
+		this.hyperrectangle = Hyperrectangle.getCoveringBox(Hyperrectanglees);
 	}
 
 	/**
 	 * Get the bounding boxes of all childs
 	 * @return
 	 */
-	public List<BoundingBox> getAllChildBoundingBoxes() {
+	public List<Hyperrectangle> getAllChildHyperrectanglees() {
 
 		// Get all Bounding boxes
 		return Stream.concat(directoryNodeChilds.stream(), indexEntries.stream())
-				.map(b -> b.getBoundingBox())
+				.map(b -> b.getHyperrectangle())
 				.collect(Collectors.toList());
 	}
 	
@@ -165,13 +165,13 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 	 * @param entryBox
 	 * @return
 	 */
-	protected RTreeDirectoryNode findBestNodeForInsert(final BoundingBox entryBox) {
+	protected RTreeDirectoryNode findBestNodeForInsert(final Hyperrectangle entryBox) {
 		RTreeDirectoryNode bestNode = null;
 		double bestEnlargement = -1;
 		
 		for(final RTreeDirectoryNode node : directoryNodeChilds) {
-			final BoundingBox nodeBoundingBox = node.getBoundingBox();
-			final double nodeEnlargement = nodeBoundingBox.calculateEnlargement(entryBox);
+			final Hyperrectangle nodeHyperrectangle = node.getHyperrectangle();
+			final double nodeEnlargement = nodeHyperrectangle.calculateEnlargement(entryBox);
 
 			if(bestNode == null) {
 				bestNode = node;
@@ -199,37 +199,51 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 
 	/**
 	 * Get all entries for a given region
-	 * @param boundingBox
+	 * @param Hyperrectangle
 	 * @return
 	 */
-	public List<SpatialIndexEntry> getEntriesForRegion(final BoundingBox boundingBox) {
+	public List<SpatialIndexEntry> getEntriesForRegion(final Hyperrectangle Hyperrectangle) {
 		
-		assert(boundingBox != null) : "Query bounding box has to be != null";
+		assert(Hyperrectangle != null) : "Query bounding box has to be != null";
 		assert(indexEntries != null) : "Index entries has to be != null";
 		assert(directoryNodeChilds != null) : "Directory node childs has to be != null";
 		
-		try {
-		final List<SpatialIndexEntry> nodeMatches = indexEntries
-			.stream()
-			.filter(c -> c.getBoundingBox().overlaps(boundingBox))
-			.collect(Collectors.toList());
+		// One result list for all nodes of the tree 
+		// (prevents expensive list merging)
+		final List<SpatialIndexEntry> result = new ArrayList<>();
 		
-		final List<SpatialIndexEntry> childMatches = directoryNodeChilds
-			.stream()
-			.filter(c -> c.getBoundingBox().overlaps(boundingBox))
-			.map(c -> c.getEntriesForRegion(boundingBox))
-			.flatMap(List::stream)
-			.collect(Collectors.toList());
-
-		return Stream.concat(nodeMatches.stream(), childMatches.stream())
-				.collect(Collectors.toList());
-		} catch(NullPointerException e) {
-			System.out.println(e);
-			System.out.println(directoryNodeChilds);
-			return null;
-		}
+		getEntriesForRegion(Hyperrectangle, result);
+		
+		return result;
 	}
 	
+	/**
+	 * Get the entries for the region (without creating new lists)
+	 * @param hyperrectangle
+	 * @param result
+	 */
+	private void getEntriesForRegion(final Hyperrectangle hyperrectangle, final List<SpatialIndexEntry> result) {
+		
+		try {
+			for(final SpatialIndexEntry entry : indexEntries) {
+				if(entry.getHyperrectangle().intersects(hyperrectangle)) {
+					result.add(entry);
+				}
+			}
+			
+			for(final RTreeDirectoryNode entry : directoryNodeChilds) {
+				if(entry.getHyperrectangle().intersects(hyperrectangle)) {
+					entry.getEntriesForRegion(hyperrectangle, result);
+				}
+			}
+			
+			} catch(NullPointerException e) {
+				System.out.println(e);
+				System.out.println(directoryNodeChilds);
+				return;
+			}		
+	}
+
 	/**
 	 * Test the bounding box covering (useful for test purposes)
 	 */
@@ -238,12 +252,12 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 		boolean success = true;
 		
 		for(final SpatialIndexEntry entry : indexEntries) {
-			if(! boundingBox.isCovering(entry.getBoundingBox())) {
+			if(! hyperrectangle.isCovering(entry.getHyperrectangle())) {
 				System.err.println("Error 1");
 				success = false;
 			}
 			
-			if(! boundingBox.overlaps(entry.getBoundingBox())) {
+			if(! hyperrectangle.intersects(entry.getHyperrectangle())) {
 				System.err.println("Error 2");
 				success = false;
 			}
@@ -251,22 +265,22 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 		
 		for(final RTreeDirectoryNode entry : directoryNodeChilds) {
 			
-			assert boundingBox != null;
-			assert entry.getBoundingBox() != null : "Null BBox: " + entry;
+			assert hyperrectangle != null;
+			assert entry.getHyperrectangle() != null : "Null BBox: " + entry;
 
-			if(! boundingBox.isCovering(entry.getBoundingBox())) {
-				System.err.println("Error 3a: " + boundingBox + " does not cover" + entry.getBoundingBox());
-				entry.updateBoundingBox();
-				updateBoundingBox();
+			if(! hyperrectangle.isCovering(entry.getHyperrectangle())) {
+				System.err.println("Error 3a: " + hyperrectangle + " does not cover" + entry.getHyperrectangle());
+				entry.updateHyperrectangle();
+				updateHyperrectangle();
 				
-				if(! boundingBox.isCovering(entry.getBoundingBox())) {
-					System.err.println("Error 3b: " + boundingBox + " does not cover" + entry.getBoundingBox());
-					System.err.println(getAllChildBoundingBoxes());
+				if(! hyperrectangle.isCovering(entry.getHyperrectangle())) {
+					System.err.println("Error 3b: " + hyperrectangle + " does not cover" + entry.getHyperrectangle());
+					System.err.println(getAllChildHyperrectanglees());
 					success = false;
 				}
 			}
 			
-			if(! boundingBox.overlaps(entry.getBoundingBox())) {
+			if(! hyperrectangle.intersects(entry.getHyperrectangle())) {
 				System.err.println("Error 4");
 				success = false;
 			}
@@ -314,7 +328,7 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((boundingBox == null) ? 0 : boundingBox.hashCode());
+		result = prime * result + ((hyperrectangle == null) ? 0 : hyperrectangle.hashCode());
 		result = prime * result + nodeId;
 		return result;
 	}
@@ -328,10 +342,10 @@ public class RTreeDirectoryNode implements BoundingBoxEntity {
 		if (getClass() != obj.getClass())
 			return false;
 		RTreeDirectoryNode other = (RTreeDirectoryNode) obj;
-		if (boundingBox == null) {
-			if (other.boundingBox != null)
+		if (hyperrectangle == null) {
+			if (other.hyperrectangle != null)
 				return false;
-		} else if (!boundingBox.equals(other.boundingBox))
+		} else if (!hyperrectangle.equals(other.hyperrectangle))
 			return false;
 		if (nodeId != other.nodeId)
 			return false;

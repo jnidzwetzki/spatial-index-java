@@ -27,7 +27,7 @@ import java.util.Queue;
 import java.util.concurrent.LinkedTransferQueue;
 
 import org.bboxdb.commons.io.DataEncoderHelper;
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 
 import com.github.jnidzwetzki.spatialindex.SpatialIndexEntry;
 import com.github.jnidzwetzki.spatialindex.SpatialIndexException;
@@ -103,11 +103,11 @@ public class RTreeMemoryReader extends AbstractRTreeReader {
 		}
 
 		// Bounding box data
-		final int boundingBoxLength = DataEncoderHelper.readIntFromDataInput(randomAccessFile);
-		final byte[] boundingBoxBytes = new byte[boundingBoxLength];
-		randomAccessFile.readFully(boundingBoxBytes, 0, boundingBoxBytes.length);
-		final BoundingBox boundingBox = BoundingBox.fromByteArray(boundingBoxBytes);
-		node.setBoundingBox(boundingBox);
+		final int HyperrectangleLength = DataEncoderHelper.readIntFromDataInput(randomAccessFile);
+		final byte[] HyperrectangleBytes = new byte[HyperrectangleLength];
+		randomAccessFile.readFully(HyperrectangleBytes, 0, HyperrectangleBytes.length);
+		final Hyperrectangle hyperrectangle = Hyperrectangle.fromByteArray(HyperrectangleBytes);
+		node.setHyperrectangle(hyperrectangle);
 		
 		// Read entry entries
 		readEntryNodes(randomAccessFile);
@@ -165,8 +165,8 @@ public class RTreeMemoryReader extends AbstractRTreeReader {
 	}
 
 	@Override
-	public List<SpatialIndexEntry> getEntriesForRegion(final BoundingBox boundingBox) {
-		return rootNode.getEntriesForRegion(boundingBox);
+	public List<SpatialIndexEntry> getEntriesForRegion(final Hyperrectangle Hyperrectangle) {
+		return rootNode.getEntriesForRegion(Hyperrectangle);
 	}
 	
 

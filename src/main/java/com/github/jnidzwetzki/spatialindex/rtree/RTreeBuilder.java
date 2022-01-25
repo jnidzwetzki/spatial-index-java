@@ -23,7 +23,7 @@ import java.util.Deque;
 import java.util.List;
 
 import org.bboxdb.commons.Pair;
-import org.bboxdb.commons.math.BoundingBox;
+import org.bboxdb.commons.math.Hyperrectangle;
 
 import com.github.jnidzwetzki.spatialindex.SpatialIndexBuilder;
 import com.github.jnidzwetzki.spatialindex.SpatialIndexEntry;
@@ -80,7 +80,7 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 		this.maxNodeSize = maxNodeSize;
 		this.nodeFactory = new RTreeNodeFactory();
 		this.rootNode = nodeFactory.buildDirectoryNode();
-		this.rootNode.updateBoundingBox();
+		this.rootNode.updateHyperrectangle();
 	}
 
 	@Override
@@ -112,7 +112,7 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 	@Override
 	public boolean insert(final SpatialIndexEntry entry) {
 
-		if(entry.getBoundingBox() == null || entry.getBoundingBox() == BoundingBox.FULL_SPACE) {
+		if(entry.getHyperrectangle() == null || entry.getHyperrectangle() == Hyperrectangle.FULL_SPACE) {
 			return false;
 		}
 
@@ -130,7 +130,7 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 	 */
 	protected RTreeDirectoryNode insert(final RTreeDirectoryNode insertBaseNode, final SpatialIndexEntry entry) {
 
-		final BoundingBox entryBox = entry.getBoundingBox();
+		final Hyperrectangle entryBox = entry.getHyperrectangle();
 
 		RTreeDirectoryNode childNode = insertBaseNode;
 
@@ -155,7 +155,7 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 
 		while(! path.isEmpty()) {
 			final RTreeDirectoryNode tmpNode = path.pop();
-			tmpNode.updateBoundingBox();
+			tmpNode.updateHyperrectangle();
 		}
 
 		return childNode;
@@ -220,16 +220,16 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 		}
 
 		// Recalculate the bounding boxes
-		newNode1.updateBoundingBox();
-		newNode2.updateBoundingBox();
-		newParent.updateBoundingBox();
+		newNode1.updateHyperrectangle();
+		newNode2.updateHyperrectangle();
+		newParent.updateHyperrectangle();
 
 		return newParent;
 	}
 
 	@Override
-	public List<? extends SpatialIndexEntry> getEntriesForRegion(final BoundingBox boundingBox) {
-		return rootNode.getEntriesForRegion(boundingBox);
+	public List<? extends SpatialIndexEntry> getEntriesForRegion(final Hyperrectangle Hyperrectangle) {
+		return rootNode.getEntriesForRegion(Hyperrectangle);
 	}
 
 	/**
@@ -251,8 +251,8 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 		newNode2.addDirectoryNodeChild(seeds.getElement2());
 
 		for(int i = 0; i < dataToDistribute.size(); i++) {
-			newNode1.updateBoundingBox();
-			newNode2.updateBoundingBox();
+			newNode1.updateHyperrectangle();
+			newNode2.updateHyperrectangle();
 
 			final int remainingObjects = dataToDistribute.size() - i;
 			final RTreeDirectoryNode entry = dataToDistribute.get(i);
@@ -267,8 +267,8 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 				continue;
 			}
 
-			final double node1Enlargement = newNode1.getBoundingBox().calculateEnlargement(entry.getBoundingBox());
-			final double node2Enlargement = newNode2.getBoundingBox().calculateEnlargement(entry.getBoundingBox());
+			final double node1Enlargement = newNode1.getHyperrectangle().calculateEnlargement(entry.getHyperrectangle());
+			final double node2Enlargement = newNode2.getHyperrectangle().calculateEnlargement(entry.getHyperrectangle());
 
 			if(node1Enlargement == node2Enlargement) {
 				if(newNode1.getDirectoryNodeChilds().size() < newNode2.getDirectoryNodeChilds().size()) {
@@ -310,8 +310,8 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 		insert(newNode2, seeds.getElement2());
 
 		for(int i = 0; i < dataToDistribute.size(); i++) {
-			newNode1.updateBoundingBox();
-			newNode2.updateBoundingBox();
+			newNode1.updateHyperrectangle();
+			newNode2.updateHyperrectangle();
 
 			final int remainingObjects = dataToDistribute.size() - i;
 			final SpatialIndexEntry entry = dataToDistribute.get(i);
@@ -326,8 +326,8 @@ public class RTreeBuilder implements SpatialIndexBuilder {
 				continue;
 			}
 
-			final double node1Enlargement = newNode1.getBoundingBox().calculateEnlargement(entry.getBoundingBox());
-			final double node2Enlargement = newNode2.getBoundingBox().calculateEnlargement(entry.getBoundingBox());
+			final double node1Enlargement = newNode1.getHyperrectangle().calculateEnlargement(entry.getHyperrectangle());
+			final double node2Enlargement = newNode2.getHyperrectangle().calculateEnlargement(entry.getHyperrectangle());
 
 			if(node1Enlargement == node2Enlargement) {
 				if(newNode1.getIndexEntries().size() < newNode2.getIndexEntries().size()) {
